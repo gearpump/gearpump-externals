@@ -19,18 +19,18 @@ trait External extends SbtModule with PublishModule {
   )
 
   val gearpumpVersion = "0.8.5-SNAPSHOT"
-
-  def compileIvyDeps = Agg(
+  val gearpumpDeps = Agg(
     ivy"org.apache.gearpump::gearpump-core:$gearpumpVersion",
     ivy"org.apache.gearpump::gearpump-streaming:$gearpumpVersion"
   )
 
+  def compileIvyDeps = gearpumpDeps
+
   def scalaLibraryIvyDeps = T { Agg.empty }
 
   trait test extends Tests {
-    def ivyDeps = Agg(
-      ivy"org.apache.gearpump::gearpump-core:$gearpumpVersion",
-      ivy"org.apache.gearpump::gearpump-streaming:$gearpumpVersion",
+    def ivyDeps = gearpumpDeps ++ Agg(
+      ivy"com.typesafe.akka::akka-testkit:2.5.18",
       ivy"org.scalatest::scalatest:2.2.0",
       ivy"org.scalacheck::scalacheck:1.11.3",
       ivy"org.mockito:mockito-core:1.10.17"
@@ -88,7 +88,7 @@ object kafka extends External {
 
   override def artifactName = "gearpump-externals-kafka"
 
-  val kafkaVersion = "0.8.2.0"
+  val kafkaVersion = "0.8.2.1"
 
   def ivyDeps = Agg(
     ivy"org.apache.kafka::kafka:$kafkaVersion",
@@ -98,9 +98,8 @@ object kafka extends External {
   object test extends super.test {
 
     def ivyDeps = super.ivyDeps() ++ Agg(
-      ivy"org.apache.kafka::kafka:$kafkaVersion".configure(
-        coursier.core.Attributes(`type` = "", classifier = "test")
-      )
+      ivy"org.apache.kafka::kafka:$kafkaVersion;classifier=test",
+      ivy"org.apache.gearpump::gearpump-core:$gearpumpVersion;classifier=tests"
     )
   }
 }
