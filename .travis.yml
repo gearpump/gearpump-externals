@@ -1,0 +1,27 @@
+language:
+- scala
+sudo: required
+jdk:
+- oraclejdk8
+addons:
+  apt:
+    packages:
+      - oracle-java8-installer
+scala:
+- 2.11.8
+cache:
+  directories:
+  - $HOME/.m2/repository
+  - $HOME/.sbt
+  - $HOME/.ivy2
+git:
+  depth: 1
+script:
+- mill hadoopfs.test
+- mill hbase.test
+- mill kafka.test
+- mill kudu.test
+- mill monoid.test
+- mill serializer.test
+- mill twitter.test
+
