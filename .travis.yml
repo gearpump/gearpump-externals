@@ -1,12 +1,9 @@
 language:
 - scala
 sudo: required
+dist: trusty
 jdk:
 - oraclejdk8
-addons:
-  apt:
-    packages:
-      - oracle-java8-installer
 scala:
 - 2.11.8
 cache:
@@ -14,14 +11,13 @@ cache:
   - $HOME/.m2/repository
   - $HOME/.sbt
   - $HOME/.ivy2
-git:
-  depth: 1
 script:
 - mill hadoopfs.test
 - mill hbase.test
 - mill kafka.test
 - mill kudu.test
-- mill monoid.test
-- mill serializer.test
 - mill twitter.test
-
+install:
+- curl -L -o ~/bin/mill https://github.com/lihaoyi/mill/releases/download/0.3.5/0.3.5 && chmod +x ~/bin/mill
+- export PATH=~/bin/mill:$PATH
+- git clone https://github.com/gearpump/gearpump && cd gearpump && sbt publishLocal && cd -
